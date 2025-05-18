@@ -53,6 +53,27 @@ app.post('/auth/google', async (req, res) => {
   }
 })
 
+app.post('/check-code', (req, res) => {
+  const { email, code } = req.body
+
+  // 1. 沒傳 email 或 code → 回傳錯誤
+  if (!email || !code) {
+    return res.status(400).json({ success: false, message: '缺少 email 或驗證碼' })
+  }
+
+  // 2. 比對驗證碼
+  const correctCode = codeStore[email]
+
+  if (code === correctCode) {
+    return res.json({ success: true, message: '驗證成功' })
+  } else {
+    return res.json({ success: false, message: '驗證碼錯誤' })
+  }
+
+})
+
+
+
 app.listen(3000, () => {
   console.log('✅ 伺服器啟動在 http://localhost:3000')
 })
